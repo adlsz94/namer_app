@@ -2,6 +2,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//https://codelabs.developers.google.com/codelabs/flutter-codelab-first?hl=pt-br#5
 void main() {
   runApp(MyApp());
 }
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         ),
         home: MyHomePage(),
       ),
@@ -32,6 +33,18 @@ class MyAppState extends ChangeNotifier {
     current = WordPair.random();
     notifyListeners();
   }
+
+  // Add this property to keep track of favorites
+  var favorites = <WordPair>[];
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatelessWidget {
@@ -40,19 +53,41 @@ class MyHomePage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
     return Scaffold(
-      body: Column(
-        children: [
-          Text('A random AWESOME idea:'),
-          BigCard(pair: pair),
-          
-          ElevatedButton(
-              onPressed: () {
-                appState.getNext();
-              },
-              child: Text('Next'),
-          )
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BigCard(pair: pair),
+            SizedBox(height: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min, // Added to center the buttons
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    appState.toggleFavorite();
+                  },
+                  icon: Icon(icon),
+                  label: Text('Like'),
+                ),
+                SizedBox(width: 10), // Space between buttons
+                ElevatedButton(
+                  onPressed: () {
+                    appState.getNext();
+                  },
+                  child: Text('Next'),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
