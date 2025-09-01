@@ -47,9 +47,23 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
-// ...
+/*
+O sublinhado (_) no início de _MyHomePageState torna essa classe privada 
+e é aplicado pelo compilador. Se quiser saber mais sobre privacidade no Dart 
+e outros tópicos, leia o Tour pela linguagem Dart no link abaixo:
 
-class MyHomePage extends StatelessWidget {
+https://dart.dev/language/libraries
+
+ */
+
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,9 +82,11 @@ class MyHomePage extends StatelessWidget {
                   label: Text('Favorites'),
                 ),
               ],
-              selectedIndex: 0,
+              selectedIndex: selectedIndex,
               onDestinationSelected: (value) {
-                print('selected: $value');
+                setState(() {
+                  selectedIndex = value;
+                });
               },
             ),
           ),
